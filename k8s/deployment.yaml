@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-registration-deploy
+  labels:
+    app: user-registration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-registration
+  template:
+    metadata:
+      labels:
+        app: user-registration
+    spec:
+      containers:
+      - name: user-registration
+        image: user-registration:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
